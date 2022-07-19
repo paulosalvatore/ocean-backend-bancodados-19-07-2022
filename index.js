@@ -74,13 +74,20 @@ async function main() {
     const id = req.params.id;
 
     // Pegar o item a ser atualizado
-    const item = req.body.nome;
+    const item = req.body;
 
-    // Atualizar na lista o valor recebido
-    herois[id - 1] = item;
+    // Atualizar na collection o valor recebido
+    collection.updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $set: item,
+      }
+    );
 
     // Envio uma mensagem de sucesso
-    res.send("Item atualizado com sucesso!");
+    res.send(item);
   });
 
   // [DELETE] /herois/:id -> Delete (Remover)
