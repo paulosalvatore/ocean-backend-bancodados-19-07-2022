@@ -1,82 +1,101 @@
 const express = require("express");
-const app = express();
+const { MongoClient } = require("mongodb");
 
-// Registrar que estamos usando JSON no Body
-// da requisição
-app.use(express.json());
+const url = "mongodb://localhost:27017";
+const dbName = "ocean_bancodados_19_07_2022";
 
-app.get("/", function (req, res) {
-  res.send("Hello World");
-});
+async function main() {
+  console.log("Conectando ao banco de dados...");
 
-// /oi -> "Olá, mundo"
-app.get("/oi", function (req, res) {
-  res.send("Olá, mundo");
-});
+  const client = await MongoClient.connect(url);
+  const db = client.db(dbName);
+  const collection = db.collection("herois");
 
-// Endpoints de Heróis
+  console.log("Banco de dados conectado com sucesso!");
 
-const herois = ["Mulher Maravilha", "Capitã Marvel", "Homem de Ferro"];
-//               0                   1                2
+  // Aplicação Backend com Express
 
-// [GET] /herois -> Read All (Ler tudo)
-app.get("/herois", function (req, res) {
-  res.send(herois.filter(Boolean));
-});
+  const app = express();
 
-// [GET] /herois/:id -> Read by ID (Ler pelo ID)
-app.get("/herois/:id", function (req, res) {
-  // Pegamos o ID pela rota
-  const id = req.params.id;
+  // Registrar que estamos usando JSON no Body
+  // da requisição
+  app.use(express.json());
 
-  // Acessar o registro na lista, usando o ID
-  const item = herois[id - 1];
+  app.get("/", function (req, res) {
+    res.send("Hello World");
+  });
 
-  // Enviar o registro encontrado
-  res.send(item);
-});
+  // /oi -> "Olá, mundo"
+  app.get("/oi", function (req, res) {
+    res.send("Olá, mundo");
+  });
 
-// [POST] /herois -> Create (Criar)
-app.post("/herois", function (req, res) {
-  // console.log(req.body);
+  // Endpoints de Heróis
 
-  // Acessamos o valor que foi enviado na request
-  const item = req.body.nome;
+  const herois = ["Mulher Maravilha", "Capitã Marvel", "Homem de Ferro"];
+  //               0                   1                2
 
-  // Insere esse valor na lista
-  herois.push(item);
+  // [GET] /herois -> Read All (Ler tudo)
+  app.get("/herois", function (req, res) {
+    res.send(herois.filter(Boolean));
+  });
 
-  // Exibe uma mensagem de sucesso
-  res.send("Item criado com sucesso!");
-});
+  // [GET] /herois/:id -> Read by ID (Ler pelo ID)
+  app.get("/herois/:id", function (req, res) {
+    // Pegamos o ID pela rota
+    const id = req.params.id;
 
-// [PUT] /herois/:id -> Update (Atualizar)
-app.put("/herois/:id", function (req, res) {
-  // Pegar o ID
-  const id = req.params.id;
+    // Acessar o registro na lista, usando o ID
+    const item = herois[id - 1];
 
-  // Pegar o item a ser atualizado
-  const item = req.body.nome;
+    // Enviar o registro encontrado
+    res.send(item);
+  });
 
-  // Atualizar na lista o valor recebido
-  herois[id - 1] = item;
+  // [POST] /herois -> Create (Criar)
+  app.post("/herois", function (req, res) {
+    // console.log(req.body);
 
-  // Envio uma mensagem de sucesso
-  res.send("Item atualizado com sucesso!");
-});
+    // Acessamos o valor que foi enviado na request
+    const item = req.body.nome;
 
-// [DELETE] /herois/:id -> Delete (Remover)
-app.delete("/herois/:id", function (req, res) {
-  // Pegar o ID
-  const id = req.params.id;
+    // Insere esse valor na lista
+    herois.push(item);
 
-  // Remove o item da lista
-  delete herois[id - 1];
+    // Exibe uma mensagem de sucesso
+    res.send("Item criado com sucesso!");
+  });
 
-  // Exibimos uma mensagem de sucesso
-  res.send("Item removido com sucesso!");
-});
+  // [PUT] /herois/:id -> Update (Atualizar)
+  app.put("/herois/:id", function (req, res) {
+    // Pegar o ID
+    const id = req.params.id;
 
-app.listen(3000, function () {
-  console.log("Aplicação rodando em http://localhost:3000");
-});
+    // Pegar o item a ser atualizado
+    const item = req.body.nome;
+
+    // Atualizar na lista o valor recebido
+    herois[id - 1] = item;
+
+    // Envio uma mensagem de sucesso
+    res.send("Item atualizado com sucesso!");
+  });
+
+  // [DELETE] /herois/:id -> Delete (Remover)
+  app.delete("/herois/:id", function (req, res) {
+    // Pegar o ID
+    const id = req.params.id;
+
+    // Remove o item da lista
+    delete herois[id - 1];
+
+    // Exibimos uma mensagem de sucesso
+    res.send("Item removido com sucesso!");
+  });
+
+  app.listen(3000, function () {
+    console.log("Aplicação rodando em http://localhost:3000");
+  });
+}
+
+main();
