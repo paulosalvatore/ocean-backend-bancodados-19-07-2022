@@ -55,17 +55,17 @@ async function main() {
   });
 
   // [POST] /herois -> Create (Criar)
-  app.post("/herois", function (req, res) {
+  app.post("/herois", async function (req, res) {
     // console.log(req.body);
 
     // Acessamos o valor que foi enviado na request
-    const item = req.body.nome;
+    const item = req.body;
 
-    // Insere esse valor na lista
-    herois.push(item);
+    // Insere esse valor na collection
+    await collection.insertOne(item);
 
     // Exibe uma mensagem de sucesso
-    res.send("Item criado com sucesso!");
+    res.send(item);
   });
 
   // [PUT] /herois/:id -> Update (Atualizar)
