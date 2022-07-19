@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
 const url = "mongodb://localhost:27017";
 const dbName = "ocean_bancodados_19_07_2022";
@@ -43,12 +43,12 @@ async function main() {
   });
 
   // [GET] /herois/:id -> Read by ID (Ler pelo ID)
-  app.get("/herois/:id", function (req, res) {
+  app.get("/herois/:id", async function (req, res) {
     // Pegamos o ID pela rota
     const id = req.params.id;
 
-    // Acessar o registro na lista, usando o ID
-    const item = herois[id - 1];
+    // Acessar o registro na collection, usando o ID
+    const item = await collection.findOne({ _id: new ObjectId(id) });
 
     // Enviar o registro encontrado
     res.send(item);
