@@ -84,12 +84,12 @@ async function main() {
   });
 
   // [DELETE] /herois/:id -> Delete (Remover)
-  app.delete("/herois/:id", function (req, res) {
+  app.delete("/herois/:id", async function (req, res) {
     // Pegar o ID
     const id = req.params.id;
 
     // Remove o item da lista
-    delete herois[id - 1];
+    await collection.deleteOne({ _id: new ObjectId(id) });
 
     // Exibimos uma mensagem de sucesso
     res.send("Item removido com sucesso!");
